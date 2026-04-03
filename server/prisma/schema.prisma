@@ -23,6 +23,7 @@ model User {
   email        String        @unique
   password     String
   role         Role          @default(APPLICANT)
+  resume       String?
   jobs         Job[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -52,14 +53,14 @@ enum ApplicationStatus {
 }
 
 model Application {
-  id     String @id @default(uuid())
-  jobId  String
-  job    Job    @relation(fields: [jobId], references: [id])
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-  status ApplicationStatus @default(PENDING)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String            @id @default(uuid())
+  jobId     String
+  job       Job               @relation(fields: [jobId], references: [id])
+  userId    String
+  user      User              @relation(fields: [userId], references: [id])
+  status    ApplicationStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 
   @@unique([jobId, userId])
 }

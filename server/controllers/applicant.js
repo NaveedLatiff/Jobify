@@ -125,7 +125,8 @@ export const getApplications = async (req, res) => {
                 user:{
                     select:{
                         name:true,
-                        email:true
+                        email:true,
+                        resume:true
                     }
                 }
             },
@@ -153,7 +154,7 @@ export const getApplications = async (req, res) => {
 export const updateStatus = async (req, res) => {
     try {
         const { status } = req.body;
-        const { id: applicationId } = req.params;
+        const { id } = req.params;
         const userId = req.userId;
 
         if (!status) {
@@ -161,7 +162,7 @@ export const updateStatus = async (req, res) => {
         }
 
         const application = await prisma.application.findUnique({
-            where: { id: applicationId },
+            where: { id },
             include: {
                 job: true 
             }
@@ -179,7 +180,7 @@ export const updateStatus = async (req, res) => {
         }
 
         const updatedApplication = await prisma.application.update({
-            where: { id: applicationId },
+            where: { id },
             data: { 
                 status: status.toUpperCase() 
             }

@@ -90,7 +90,7 @@ export const updateJob = async (req, res) => {
 export const deleteJob = async (req, res) => {
     try {
         const userId = req.userId
-        const {id} = req.params
+        const { id } = req.params
 
         const job = await prisma.job.findUnique({
             where: {
@@ -153,21 +153,21 @@ export const getPostedJobs = async (req, res) => {
             })
         }
 
-        const jobs=await prisma.job.findMany({
-            where:{
+        const jobs = await prisma.job.findMany({
+            where: {
                 userId
             }
         })
 
-        if(jobs.length==0){
+        if (jobs.length == 0) {
             return res.json({
-                success:false,
-                message:"No Job Posted"
+                success: false,
+                message: "No Job Posted"
             })
         }
 
         return res.json({
-            success:true,
+            success: true,
             jobs
         })
 
@@ -176,3 +176,56 @@ export const getPostedJobs = async (req, res) => {
 
     }
 }
+
+export const getAllJobs = async (req, res) => {
+    try {
+        const jobs = await prisma.job.findMany({
+            orderBy: {
+                createdAt: 'desc' 
+            }
+        })
+
+        return res.json({
+            success: true,
+            jobs
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false
+        })
+    }
+}
+
+export const getSingleJob = async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        const job = await prisma.job.findUnique({
+            where: {
+                id: id 
+            }
+        });
+
+        if (!job) {
+            return res.json({
+                message: "Job not found.",
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            job
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false
+        });
+    }
+};
+

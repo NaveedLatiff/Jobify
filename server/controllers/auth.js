@@ -1,6 +1,7 @@
 import prisma from '../config/db.js'
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
+import cloudinary from "../config/cloudinary.js";
 
 export const register = async (req, res) => {
     try {
@@ -20,7 +21,7 @@ export const register = async (req, res) => {
         if (userExist) {
             return res.json({
                 success: false,
-                message: "User already Exist with the given email"
+                message: "Email already registered"
             })
         }
 
@@ -100,6 +101,56 @@ export const login = async (req, res) => {
     }
 }
 
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { name, password, resume } = req.body;
+
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        let updateData = {};
+        if (name) updateData.name = name;
+
+        if (password && password.trim() !== "") {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
+
+        if (user.role === "APPLICANT") {
+            if (resume && resume.startsWith("data:")) {
+                try {
+                    const uploadResponse = await cloudinary.uploader.upload(resume, {
+                        folder: "user_resumes",
+                        // CHANGE: Use "raw" for PDFs/Docs to avoid the /image/ link issue
+                        resource_type: "raw", 
+                    });
+
+                    updateData.resume = uploadResponse.secure_url;
+                } catch (uploadErr) {
+                    console.error("Cloudinary Error:", uploadErr);
+                    return res.json({ success: false, message: "File upload failed" });
+                }
+            }
+        }
+
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: updateData
+        });
+
+        const { password: _, ...userWithoutPassword } = updatedUser;
+
+        return res.json({
+            success: true,
+            message: "Profile updated successfully",
+            user: userWithoutPassword
+        });
+
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+};
+
 export const logout = async (req, res) => {
     try {
         res.clearCookie('token', {
@@ -128,7 +179,7 @@ export const isAuthenticated = async (req, res) => {
         if (!id) {
             return res.json({
                 success: false,
-                message: "User ID not found"
+                message: "User Id not found"
             });
         }
 
