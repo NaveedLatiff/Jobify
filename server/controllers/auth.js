@@ -36,13 +36,12 @@ export const register = async (req, res) => {
         const token = jwt.sign({ id: user.id }, process.env.SESSION_SECRET, { expiresIn: '7d' })
 
         res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,          
-            sameSite: "none",
-            path: "/",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
-
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  path: "/",
+  maxAge: 7 * 24 * 60 * 60 * 1000
+});
         return res.json({
             success: true,
             message: "Successfully Signup",
@@ -81,11 +80,12 @@ export const login = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
+
         return res.json({
             success: true,
             message: "Successfully login",
@@ -120,7 +120,6 @@ export const updateProfile = async (req, res) => {
                 try {
                     const uploadResponse = await cloudinary.uploader.upload(resume, {
                         folder: "user_resumes",
-                        // CHANGE: Use "raw" for PDFs/Docs to avoid the /image/ link issue
                         resource_type: "raw",
                     });
 
@@ -154,9 +153,9 @@ export const logout = async (req, res) => {
     try {
         res.clearCookie('token', {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
-        })
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        });
 
         return res.json({
             success: true,
