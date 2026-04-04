@@ -37,8 +37,8 @@ export const register = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: false,
+            sameSite: "lax",
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
@@ -81,8 +81,8 @@ export const login = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+            secure: false,        
+            sameSite: "lax",      
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
@@ -122,7 +122,7 @@ export const updateProfile = async (req, res) => {
                     const uploadResponse = await cloudinary.uploader.upload(resume, {
                         folder: "user_resumes",
                         // CHANGE: Use "raw" for PDFs/Docs to avoid the /image/ link issue
-                        resource_type: "raw", 
+                        resource_type: "raw",
                     });
 
                     updateData.resume = uploadResponse.secure_url;
@@ -184,7 +184,7 @@ export const isAuthenticated = async (req, res) => {
         }
 
         const user = await prisma.user.findUnique({
-            where:{
+            where: {
                 id
             }
         });
