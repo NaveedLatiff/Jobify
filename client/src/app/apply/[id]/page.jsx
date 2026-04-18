@@ -124,14 +124,12 @@ const JobDetailsPage = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="flex justify-evenly">
             {[
               { label: 'Salary', value: job.salary },
-              { label: 'Type', value: job.jobType },
-              { label: 'Experience', value: job.experience },
-              { label: 'Positions', value: job.position },
+              { label: 'Type', value: job.jobType }
             ].map((item, index) => (
-              <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-3">
+              <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-3 w-[40%] text-center">
                 <p className="text-slate-500 text-[10px] uppercase tracking-widest font-semibold mb-1">{item.label}</p>
                 <p className="text-white text-sm font-semibold">{item.value || 'N/A'}</p>
               </div>

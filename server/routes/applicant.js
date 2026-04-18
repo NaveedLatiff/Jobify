@@ -11,6 +11,4 @@ applicantRouter.put('/update/:id',userAuth,updateStatus)
 
 
 
-
-
 export default applicantRouter;
