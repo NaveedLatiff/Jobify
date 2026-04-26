@@ -13,7 +13,6 @@ COPY . .
 
 RUN npm run build
 
-# You mentioned backend is on 3000
 EXPOSE 3000
 
 CMD ["npm", "start"]

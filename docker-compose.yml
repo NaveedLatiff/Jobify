@@ -1,7 +1,7 @@
 services:
   backend:
     build: ./server
-    container_name: pingly-backend
+    container_name: jobify-backend
     restart: always
     ports:
       - "3000:3000"
@@ -12,9 +12,8 @@ services:
     build: 
       context: ./client
       args:
-        # This passes the secret from your .env into the Docker build process
         - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
-    container_name: pingly-frontend
+    container_name: jobify-frontend
     restart: always
     ports:
       - "3001:3001"
