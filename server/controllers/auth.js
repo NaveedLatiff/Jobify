@@ -37,10 +37,11 @@ export const register = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "None",
-            secure: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
         return res.json({
             success: true,
             message: "Successfully Signup",
@@ -79,11 +80,11 @@ export const login = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "None",
-            secure: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
 
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
 
         return res.json({
             success: true,
@@ -150,12 +151,12 @@ export const updateProfile = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        res.clearCookie('token', {
+         res.clearCookie('token', {
             httpOnly: true,
-            sameSite: "None",
-            secure: true,
+            secure: false,
+            sameSite: "lax", 
 
-        });
+        })
 
         return res.json({
             success: true,
